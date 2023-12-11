@@ -39,7 +39,7 @@ def main():
     if not os.path.exists(markdown_file):
         print(f"Missing {markdown_file}", file=sys.stderr)
         exit(1)
-    
+
     # Open the Markdown file and the HTML output file
     with open(markdown_file, 'r') as md, open(sys.argv[2], 'w') as html:
         for line in md:
