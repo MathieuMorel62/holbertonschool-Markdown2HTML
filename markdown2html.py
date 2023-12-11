@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+""" Main function that converts a Markdown file to HTML. """
 import sys
 import os
 
