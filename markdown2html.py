@@ -4,6 +4,22 @@ import sys
 import os
 
 
+def markdown_to_html(line):
+    """
+    Convert Markdown headings to HTML.
+
+    Args:
+        line (str): The input Markdown line.
+
+    Returns:
+        str: The HTML-formatted line.
+    """
+    for i in range(6, 0, -1):
+        if line.startswith('#' * i):
+            return f'<h{i}>{line[i+1:].strip()}</h{i}>\\n'
+    return line
+
+
 def main():
     """
     Main function that converts a Markdown file to HTML.
@@ -23,6 +39,11 @@ def main():
     if not os.path.exists(markdown_file):
         print(f"Missing {markdown_file}", file=sys.stderr)
         exit(1)
+    
+    # Open the Markdown file and the HTML output file
+    with open(markdown_file, 'r') as md, open(sys.argv[2], 'w') as html:
+        for line in md:
+            html.write(markdown_to_html(line) + '\n')
 
     exit(0)
 
