@@ -4,7 +4,7 @@ import sys
 import os
 
 
-def markdown_to_html(line):
+def convert_markdown_heading_to_html(line):
     """
     Convert Markdown headings to HTML.
 
@@ -43,7 +43,7 @@ def main():
     # Open the Markdown file and the HTML output file
     with open(markdown_file, 'r') as md, open(sys.argv[2], 'w') as html:
         for line in md:
-            html.write(markdown_to_html(line) + '\n')
+            html.write(convert_markdown_heading_to_html(line) + '\n')
 
     exit(0)
 
