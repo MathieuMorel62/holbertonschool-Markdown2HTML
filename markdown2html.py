@@ -61,6 +61,31 @@ def convert_markdown_ol_list_to_html(lines):
     return html_lines
 
 
+def starts_with_html_tag(line):
+    """ Check if the line starts with an HTML tag that we want to skip wrapping with <p> tags. """
+    return line.lstrip().startswith(('<h', '<ul', '<ol', '<li', '</ul>', '</ol>'))
+
+
+def convert_markdown_paragraph_to_html(lines):
+    html_lines = []
+    paragraph = []
+
+    for line in lines:
+        if not starts_with_html_tag(line) and line.strip() != '':
+            paragraph.append(line.strip())
+        else:
+            if paragraph:
+                html_lines.append('<p>\n' + '<br/>\n'.join(paragraph) + '\n</p>\n')
+                paragraph = []
+            if line.strip() != '':
+                html_lines.append(line)
+
+    if paragraph:
+        html_lines.append('<p>\n' + '\n<br/>\n'.join(paragraph) + '\n</p>\n')
+
+    return html_lines
+
+
 def main():
     """
     Main function that converts a Markdown file to HTML.
@@ -88,6 +113,7 @@ def main():
         converted_lines = convert_markdown_heading_to_html(lines)
         converted_lines = convert_markdown_ul_list_to_html(converted_lines)
         converted_lines = convert_markdown_ol_list_to_html(converted_lines)
+        converted_lines = convert_markdown_paragraph_to_html(converted_lines)
         html.writelines(converted_lines)
 
     exit(0)
