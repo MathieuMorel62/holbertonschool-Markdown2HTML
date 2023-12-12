@@ -3,6 +3,7 @@
 import sys
 import os
 import re
+import hashlib
 
 
 def convert_markdown_heading_to_html(lines):
@@ -90,9 +91,27 @@ def convert_markdown_paragraph_to_html(lines):
     return html_lines
 
 
-def convert_bold_and_emphasis_to_html(line):
+def convert_markdown_b_and_em_to_html(line):
     line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line)
     line = re.sub(r'__(.*?)__', r'<em>\1</em>', line)
+    return line
+
+
+def md5_conversion(match):
+    text_to_convert = match.group(1).lower()
+    md5_hash = hashlib.md5(text_to_convert.encode()).hexdigest()
+    return md5_hash
+
+
+def remove_c(match):
+    text_to_clean = match.group(1)
+    cleaned_text = re.sub(r'c', '', text_to_clean, flags=re.IGNORECASE)
+    return cleaned_text
+
+
+def process_custom_markdown_syntax(line):
+    line = re.sub(r'\[\[(.*?)\]\]', md5_conversion, line)
+    line = re.sub(r'\(\((.*?)\)\)', remove_c, line)
     return line
 
 
@@ -120,11 +139,15 @@ def main():
     # Open the Markdown file and the HTML output file
     with open(markdown_file, 'r') as md, open(html_file, 'w') as html:
         lines = md.readlines()
-        converted_lines = convert_markdown_heading_to_html(lines)
+        custom_convert_lines = [process_custom_markdown_syntax(line)
+                                for line in lines]
+        b_em_convert_lines = [convert_markdown_b_and_em_to_html(line)
+                              for line in custom_convert_lines]
+        converted_lines = convert_markdown_heading_to_html(b_em_convert_lines)
         converted_lines = convert_markdown_ul_list_to_html(converted_lines)
         converted_lines = convert_markdown_ol_list_to_html(converted_lines)
         converted_lines = convert_markdown_paragraph_to_html(converted_lines)
-        converted_lines = [convert_bold_and_emphasis_to_html(line)
+        converted_lines = [convert_markdown_b_and_em_to_html(line)
                            for line in converted_lines]
         html.writelines(converted_lines)
 
