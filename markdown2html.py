@@ -38,6 +38,29 @@ def convert_markdown_ul_list_to_html(lines):
     return html_lines
 
 
+def convert_markdown_ol_list_to_html(lines):
+    in_list = False
+    html_lines = []
+
+    for line in lines:
+        if line.startswith('* '):
+            line_content = line[2:].strip()
+            if not in_list:
+                html_lines.append('<ol>\n')
+                in_list = True
+            html_lines.append(f'   <li>{line_content}</li>\n')
+        else:
+            if in_list:
+                html_lines.append('</ol>\n')
+                in_list = False
+            html_lines.append(line)
+
+    if in_list:
+        html_lines.append('</ol>\n')
+
+    return html_lines
+
+
 def main():
     """
     Main function that converts a Markdown file to HTML.
@@ -53,16 +76,18 @@ def main():
         exit(1)
 
     markdown_file = sys.argv[1]
+    html_file = sys.argv[2]
 
     if not os.path.exists(markdown_file):
         print(f"Missing {markdown_file}", file=sys.stderr)
         exit(1)
 
     # Open the Markdown file and the HTML output file
-    with open(markdown_file, 'r') as md, open(sys.argv[2], 'w') as html:
+    with open(markdown_file, 'r') as md, open(html_file, 'w') as html:
         lines = md.readlines()
         converted_lines = convert_markdown_heading_to_html(lines)
         converted_lines = convert_markdown_ul_list_to_html(converted_lines)
+        converted_lines = convert_markdown_ol_list_to_html(converted_lines)
         html.writelines(converted_lines)
 
     exit(0)
