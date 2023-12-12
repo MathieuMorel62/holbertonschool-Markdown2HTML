@@ -98,7 +98,7 @@ def convert_markdown_b_and_em_to_html(line):
 
 
 def md5_conversion(match):
-    text_to_convert = match.group(1).lower()
+    text_to_convert = match.group(1)
     md5_hash = hashlib.md5(text_to_convert.encode()).hexdigest()
     return md5_hash
 
