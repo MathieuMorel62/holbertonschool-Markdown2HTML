@@ -2,6 +2,7 @@
 """ Main function that converts a Markdown file to HTML. """
 import sys
 import os
+import re
 
 
 def convert_markdown_heading_to_html(lines):
@@ -62,8 +63,10 @@ def convert_markdown_ol_list_to_html(lines):
 
 
 def starts_with_html_tag(line):
-    """ Check if the line starts with an HTML tag that we want to skip wrapping with <p> tags. """
-    return line.lstrip().startswith(('<h', '<ul', '<ol', '<li', '</ul>', '</ol>'))
+    """ Check if the line starts with an HTML tag """
+    return line.lstrip().startswith((
+        '<h', '<ul', '<ol', '<li', '</ul>', '</ol>'
+    ))
 
 
 def convert_markdown_paragraph_to_html(lines):
@@ -75,7 +78,8 @@ def convert_markdown_paragraph_to_html(lines):
             paragraph.append(line.strip())
         else:
             if paragraph:
-                html_lines.append('<p>\n' + '<br/>\n'.join(paragraph) + '\n</p>\n')
+                html_lines.append(
+                    '<p>\n' + '\n<br/>\n'.join(paragraph) + '\n</p>\n')
                 paragraph = []
             if line.strip() != '':
                 html_lines.append(line)
@@ -84,6 +88,12 @@ def convert_markdown_paragraph_to_html(lines):
         html_lines.append('<p>\n' + '\n<br/>\n'.join(paragraph) + '\n</p>\n')
 
     return html_lines
+
+
+def convert_bold_and_emphasis_to_html(line):
+    line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line)
+    line = re.sub(r'__(.*?)__', r'<em>\1</em>', line)
+    return line
 
 
 def main():
@@ -114,6 +124,8 @@ def main():
         converted_lines = convert_markdown_ul_list_to_html(converted_lines)
         converted_lines = convert_markdown_ol_list_to_html(converted_lines)
         converted_lines = convert_markdown_paragraph_to_html(converted_lines)
+        converted_lines = [convert_bold_and_emphasis_to_html(line)
+                           for line in converted_lines]
         html.writelines(converted_lines)
 
     exit(0)
