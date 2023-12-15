@@ -4,7 +4,7 @@
 
 
 ## Description
-This Python-based project converts Markdown files into HTML. It handles headings, lists, paragraphs, and text formatting, transforming Markdown syntax into structured HTML.
+This project, `Markdown to HTML Converter`, is a Python-based tool for converting Markdown files into HTML. It covers parsing various Markdown elements like headings, lists, and text formatting into their HTML counterparts, providing a practical utility for web content creation.
 
 ## Requirements
 - Ubuntu 18.04 LTS
